@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.tes.sapper.MainMenu"
+    android:background="@color/mainBackground"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_game"
+            android:textSize="50sp"
+            android:id="@+id/newGame"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="70dp"
+            android:onClick="onClick"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/options"
+            android:textSize="50sp"
+            android:id="@+id/options"
+            android:layout_gravity="center"
+            android:layout_marginBottom="70dp"
+            android:onClick="onClick"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/quit"
+            android:textSize="50sp"
+            android:id="@+id/quit"
+            android:layout_gravity="center"
+            android:layout_marginBottom="70dp"
+            android:onClick="onClick"/>
+    </LinearLayout>
+
+</LinearLayout>

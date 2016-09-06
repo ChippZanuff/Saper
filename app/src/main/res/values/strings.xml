@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Sapper</string>
+    <string name="new_game">New Game</string>
+    <string name="options">Options</string>
+    <string name="quit">Quit</string>
+    <string name="Cell"/>
+    <string name="retry">Retry?</string>
+</resources>
