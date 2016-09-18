@@ -2,21 +2,20 @@ package com.example.tes.sapper;
 
 public class CellParam
 {
-    private boolean mine, flag, isOpened;
-    private int colPosition, rowPosition;
+    private boolean mine, flag, isOpened, isMinesAround, isCellVisitedByIterator;
 
-    public CellParam(int col, int row)
+    public CellParam()
     {
-        this.setDefaultParams(col, row);
+        this.setDefaultParams();
     }
 
-    private void setDefaultParams(int col, int row)
+    private void setDefaultParams()
     {
         this.flag = false;
         this.mine = false;
         this.isOpened = false;
-        this.colPosition = col;
-        this.rowPosition = row;
+        this.isMinesAround = false;
+        this.isCellVisitedByIterator = false;
     }
 
     public boolean isHaveMine()
@@ -39,16 +38,6 @@ public class CellParam
         this.flag = ! this.flag;
     }
 
-    public int getColPosition()
-    {
-        return colPosition;
-    }
-
-    public int getRowPosition()
-    {
-        return rowPosition;
-    }
-
     public boolean isOpened()
     {
         return isOpened;
@@ -57,6 +46,26 @@ public class CellParam
     public void setOpened()
     {
         isOpened = true;
+    }
+
+    public void setCellVisitedByIterator()
+    {
+        isCellVisitedByIterator = true;
+    }
+
+    public boolean isCellVisitedByIterator()
+    {
+        return isCellVisitedByIterator;
+    }
+
+    public boolean isMinesAround()
+    {
+        return isMinesAround;
+    }
+
+    public void setMinesAround()
+    {
+        this.isMinesAround= true;
     }
 }
 

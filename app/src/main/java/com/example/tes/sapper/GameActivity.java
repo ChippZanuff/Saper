@@ -18,12 +18,16 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 {
     private Animation openCell;
     private GridView gridField;
+    private Board board;
     private ImageAdapter adapter;
-    private CellMiner cellMiner;
-    private ArrayList<CellParam> cells;
     private GameMechanics mechanics;
-    private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6;
+    private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
+    private boolean gameOver;
     private int retryId, quitId;
+    private enum minesAmount
+    {;
+        private static final int one = 1, two = 2, three = 3, four = 4, five = 5;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,9 +35,8 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamefield);
 
-        this.cellMiner = new CellMiner(CELLS_AMOUNT, AMOUNT_OF_MINES);
-
         this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT);
+        this.gameOver = false;
 
         this.gridField = (GridView) findViewById(R.id.field);
         this.gridField.setAdapter(this.adapter);
@@ -41,9 +44,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.gridField.setOnItemLongClickListener(this);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
-        this.cells = this.cellMiner.createBoard();
+        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS);
 
-        this.mechanics = new GameMechanics(this.cells, openCell);
+        this.mechanics = new GameMechanics(this.board);
     }
 
     @Override
@@ -62,9 +65,12 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int cellPosition, long l)
     {
-        if(this.mechanics.isCellOpened(cellPosition));
+        int xCoord = this.mechanics.transformToCoordRow(cellPosition);
+        int yCoord = this.mechanics.transformToCoordCol(cellPosition);
+
+        if(!this.board.isCellOpened(xCoord, yCoord));
         {
-            if(!this.cells.get(cellPosition).isHaveFlag())
+            if(!this.board.haveCellFlagById(xCoord, yCoord))
             {
                 view.setBackgroundResource(R.drawable.flag);
             }
@@ -73,7 +79,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
                 view.setBackgroundResource(R.drawable.closedcell);
             }
 
-            this.cells.get(cellPosition).raiseOrPutDownFlag();
+            this.board.raiseOrPutDownFlagById(xCoord, yCoord);
         }
         return true;
     }
@@ -81,32 +87,124 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int cellPosition, long l)
     {
-        if(!this.mechanics.isCellOpened(cellPosition) && !this.cells.get(cellPosition).isHaveFlag())
-        {
-            this.mechanics.clickedCellHaveNoMine(cellPosition, view);
+        int xCoord = this.mechanics.transformToCoordRow(cellPosition);
+        int yCoord = this.mechanics.transformToCoordCol(cellPosition);
 
-            if(this.mechanics.clickedCellHaveMine(cellPosition, view, adapterView))
+        CellParam clickedCell = this.board.getCellById(xCoord,yCoord);
+
+        if(clickedCell.isHaveMine() && !clickedCell.isHaveFlag())
+        {
+            this.openField(adapterView);
+            this.createMenuAfterGameOver();
+            return;
+        }
+
+        this.mechanics.cellsIteration(xCoord, yCoord, adapterView);
+
+        ArrayList<View> emptyCellView = this.mechanics.getEmptyCellView();
+
+        for(View cell : emptyCellView)
+        {
+            cell.setBackgroundResource(R.drawable.openedcell);
+            cell.startAnimation(this.openCell);
+        }
+        
+        ArrayList<View> minesAroundView = this.mechanics.getMinesAroundView();
+        ArrayList<Integer> minesAroundAmount = this.mechanics.getMinesValue();
+
+        for(int i = 0; i < minesAroundView.size(); i++)
+        {
+            this.setNumAdjacentMines(minesAroundView.get(i), minesAroundAmount.get(i));
+        }
+
+        emptyCellView.clear();
+        minesAroundAmount.clear();
+        minesAroundView.clear();
+
+    }
+
+    private void setNumAdjacentMines(View iteratedView, int adjacentMinesCounter)
+    {
+        switch(adjacentMinesCounter)
+        {
+            case minesAmount.one:
+                iteratedView.setBackgroundResource(R.drawable.one);
+                iteratedView.setAnimation(this.openCell);
+                break;
+            case minesAmount.two:
+                iteratedView.setBackgroundResource(R.drawable.two);
+                iteratedView.setAnimation(this.openCell);
+                break;
+            case minesAmount.three:
+                iteratedView.setBackgroundResource(R.drawable.three);
+                iteratedView.setAnimation(this.openCell);
+                break;
+            case minesAmount.four:
+                iteratedView.setBackgroundResource(R.drawable.four);
+                iteratedView.setAnimation(this.openCell);
+                break;
+            case minesAmount.five:
+                iteratedView.setBackgroundResource(R.drawable.five);
+                iteratedView.setAnimation(this.openCell);
+                break;
+        }
+    }
+
+    private void openField(AdapterView<?> adapterView)
+    {
+        int xCoord;
+        int yCoord;
+
+        for (int i = 0; i < this.board.getAmountOfCells(); i++)
+        {
+            xCoord = i / this.board.getNumColumns();
+            yCoord = i % this.board.getNumColumns();
+
+            if(this.board.isCellOpened(xCoord, yCoord) || this.board.isMinesAround(xCoord, yCoord))
             {
-                this.createMenuAfterGameOver();
+                continue;
             }
-            this.cells.get(cellPosition).setOpened();
+
+            View child = adapterView.getChildAt(i);
+            this.board.setCellOpened(xCoord, yCoord);
+
+            if(this.board.haveCellMineById(xCoord, yCoord))
+            {
+                child.setBackgroundResource(R.drawable.mine);
+            }
+
+            if(this.board.haveCellFlagById(xCoord, yCoord) || this.board.haveCellMineById(xCoord, yCoord) && this.board.haveCellFlagById(xCoord, yCoord))
+            {
+                child.setBackgroundResource(R.drawable.flag);
+            }
+
+            if(!this.board.haveCellMineById(xCoord, yCoord))
+            {
+                child.setBackgroundResource(R.drawable.openedcell);
+            }
+
+            child.startAnimation(this.openCell);
         }
     }
 
     private void createMenuAfterGameOver()
     {
-        int wrapContent = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int gravity = Gravity.RIGHT;
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(wrapContent, wrapContent);
-        params.gravity = gravity;
+        if(!this.gameOver)
+        {
+            this.gameOver = true;
+            int wrapContent = LinearLayout.LayoutParams.WRAP_CONTENT;
+            int gravity = Gravity.RIGHT;
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(wrapContent, wrapContent);
+            params.gravity = gravity;
 
-        LinearLayout layout = new LinearLayout(this);
-        layout.setLayoutParams(params);
+            LinearLayout layout = new LinearLayout(this);
+            layout.setLayoutParams(params);
 
-        this.createButtonsAfterGameOver(layout);
+            this.createButtonsAfterGameOver(layout);
 
-        LinearLayout llMain = (LinearLayout) findViewById(R.id.gameActivityLinearLayout);
-        llMain.addView(layout);
+            LinearLayout llMain = (LinearLayout) findViewById(R.id.gameActivityLinearLayout);
+            llMain.addView(layout);
+        }
     }
 
     private void createButtonsAfterGameOver(LinearLayout layout)
