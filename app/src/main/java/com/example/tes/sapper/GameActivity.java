@@ -1,20 +1,19 @@
 package com.example.tes.sapper;
 
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
-public class GameActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener
+public class GameActivity extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
 {
     private Animation openCell;
     private GridView gridField;
@@ -23,7 +22,6 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private GameMechanics mechanics;
     private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
     private boolean gameOver;
-    private int retryId, quitId;
     private enum minesAmount
     {;
         private static final int one = 1, two = 2, three = 3, four = 4, five = 5;
@@ -49,14 +47,13 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.mechanics = new GameMechanics(this.board);
     }
 
-    @Override
     public void onClick(View view)
     {
-        if(view.getId() == this.retryId)
+        if(view.getId() == R.id.retry)
         {
             recreate();
         }
-        else if (view.getId() == this.quitId)
+        else if (view.getId() == R.id.menu)
         {
             finish();
         }
@@ -115,6 +112,8 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         for(int i = 0; i < minesAroundView.size(); i++)
         {
             this.setNumAdjacentMines(minesAroundView.get(i), minesAroundAmount.get(i));
+
+            minesAroundView.get(i).setAnimation(this.openCell);
         }
 
         emptyCellView.clear();
@@ -129,23 +128,18 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         {
             case minesAmount.one:
                 iteratedView.setBackgroundResource(R.drawable.one);
-                iteratedView.setAnimation(this.openCell);
                 break;
             case minesAmount.two:
                 iteratedView.setBackgroundResource(R.drawable.two);
-                iteratedView.setAnimation(this.openCell);
                 break;
             case minesAmount.three:
                 iteratedView.setBackgroundResource(R.drawable.three);
-                iteratedView.setAnimation(this.openCell);
                 break;
             case minesAmount.four:
                 iteratedView.setBackgroundResource(R.drawable.four);
-                iteratedView.setAnimation(this.openCell);
                 break;
             case minesAmount.five:
                 iteratedView.setBackgroundResource(R.drawable.five);
-                iteratedView.setAnimation(this.openCell);
                 break;
         }
     }
@@ -209,27 +203,8 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
     private void createButtonsAfterGameOver(LinearLayout layout)
     {
-        Button retry = new Button(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-        {
-            this.retryId = View.generateViewId();
-            retry.setId(this.retryId);
-        }
-        retry.setText(R.string.retry);
-        retry.setTextSize(40);
-        retry.setOnClickListener(this);
-
-        Button quit = new Button(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-        {
-            this.quitId = View.generateViewId();
-            quit.setId(this.quitId);
-        }
-        quit.setText(R.string.quit);
-        quit.setTextSize(40);
-        quit.setOnClickListener(this);
-
-        layout.addView(retry);
-        layout.addView(quit);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View lay = inflater.inflate(R.layout.gameoverbuttons, layout, false);
+        layout.addView(lay);
     }
 }

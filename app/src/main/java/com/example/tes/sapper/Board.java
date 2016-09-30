@@ -62,7 +62,11 @@ public class Board
 
     public boolean isCellExists(int row, int column)
     {
-        return this.cells.get(row).get(column) != null;
+        if(row >= 0 && row < this.getRows() && column >= 0 && column < this.getNumColumns())
+        {
+            return this.cells.get(row).get(column) != null;
+        }
+        return false;
     }
 
     public boolean isCellOpened(int row, int col)

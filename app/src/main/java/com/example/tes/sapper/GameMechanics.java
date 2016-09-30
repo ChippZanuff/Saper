@@ -122,14 +122,16 @@ public class GameMechanics
 
     private void selectAdjacentCells(ArrayList<CellParam> adjacentMinesCells, int row, int col)
     {
-        AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col));
-        AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col + this.RIGHT));
-        AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col + this.RIGHT));
-        AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col));
-        AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col + this.LEFT));
-        AddCellParam(adjacentMinesCells, this.board.getCellById(row, col + this.LEFT));
-        AddCellParam(adjacentMinesCells, this.board.getCellById(row, col + this.RIGHT));
-        AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col + this.LEFT));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col + this.RIGHT));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col + this.LEFT));
+
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col + this.RIGHT));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col + this.LEFT));
+
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row, col + this.LEFT));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row, col + this.RIGHT));
     }
 
     private void AddCellParam(ArrayList<CellParam> adjacentMinesCells, CellParam cell)
