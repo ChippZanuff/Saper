@@ -1,97 +1,170 @@
 package com.example.tes.sapper;
 
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.AdapterView;
 
 import java.util.ArrayList;
 
 public class GameMechanics
 {
-    private ArrayList<CellParam> cells;
-    private Animation openCell;
+    private Board board;
+    private ArrayList<View> emptyCellView;
+    private ArrayList<View> minesAroundView;
+    private ArrayList<Integer> minesValue;
+    private int adjacentMinesCounter;
+    private final int LEFT = -1, RIGHT = 1, TOP = -1, BOTTOM = 1;
 
-    public GameMechanics(ArrayList<CellParam> cells, Animation openCell)
+    public GameMechanics(Board board)
     {
-        this.openCell = openCell;
-        this.cells = cells;
+        this.emptyCellView = new ArrayList<>();
+        this.minesAroundView = new ArrayList<>();
+        this.minesValue = new ArrayList<>();
+        this.board = board;
+        this.adjacentMinesCounter = 0;
     }
 
-    public boolean isCellOpened(int cellPosition)
+    public void cellsIteration(int row, int col, AdapterView<?> adapterView)
     {
-        return this.cells.get(cellPosition).isOpened();
-    }
+        CellParam cell;
+        ArrayList<CellParam> adjacentMinesCells = new ArrayList<>();
+        int transformedIndex = row * this.board.getNumColumns() + col;
+        View iteratedView = adapterView.getChildAt(transformedIndex);
 
-    private void openCell(View view)
-    {
-        view.setBackgroundResource(R.drawable.openedcell);
-        view.startAnimation(this.openCell);
-    }
-
-    public boolean clickedCellHaveMine(int cellPosition, View view, AdapterView<?> adapterView)
-    {
-        if(this.cells.get(cellPosition) != null && this.cells.get(cellPosition).isHaveMine())
+        cell = this.board.getCellById(row, col);
+        if (!cell.isCellVisitedByIterator() && !cell.isOpened() && !cell.isHaveFlag() && !cell.isHaveMine())
         {
-            view.startAnimation(this.openCell);
-            this.openField(adapterView);
-            return true;
-        }
-        return false;
-    }
+            this.selectAdjacentCells(adjacentMinesCells, row, col);
 
-    public void clickedCellHaveNoMine(int cellPosition, View view)
-    {
-        if(this.cells.get(cellPosition) != null && !this.cells.get(cellPosition).isHaveMine())
-        {
-            this.openCell(view);
-        }
-    }
+            this.checkMines(adjacentMinesCells, row, col);
 
-    private void openField(AdapterView<?> adapterView)
-    {
-        for (int i = 0; i < this.cells.size(); i++)
-        {
-            if(this.cells.get(i).isOpened())
+            if (!cell.isMinesAround())
             {
-                continue;
+                this.emptyCellView.add(iteratedView);
+            } else
+            {
+                this.minesAroundView.add(iteratedView);
+                this.minesValue.add(this.adjacentMinesCounter);
+                cell.setMinesAround();
             }
 
-            View child = adapterView.getChildAt(i);
-            this.cells.get(i).setOpened();
+            this.adjacentMinesCounter = 0;
 
-            if(this.cells.get(i).isHaveMine())
+            if (!cell.isMinesAround())
             {
-                child.setBackgroundResource(R.drawable.mine);
-            }
+                if (col < this.board.getNumColumns() - 1)
+                {
+                    cell.setOpened();
+                    this.cellsIteration(row, col + this.RIGHT, adapterView);
+                }
 
-            if(this.cells.get(i).isHaveFlag() || this.cells.get(i).isHaveMine() && this.cells.get(i).isHaveFlag())
-            {
-                child.setBackgroundResource(R.drawable.flag);
-            }
+                if (row < this.board.getRows() - 1)
+                {
+                    cell.setOpened();
+                    this.cellsIteration(row + this.BOTTOM, col, adapterView);
+                }
 
-            if(!this.cells.get(i).isHaveMine())
-            {
-                child.setBackgroundResource(R.drawable.openedcell);
+                if (row >= 1)
+                {
+                    cell.setOpened();
+                    this.cellsIteration(row + this.TOP, col, adapterView);
+                }
+
+                if (col >= 1)
+                {
+                    cell.setOpened();
+                    this.cellsIteration(row, col + this.LEFT, adapterView);
+                }
+
+
+                if (col < this.board.getNumColumns() - 1 && row < this.board.getRows() - 1)
+                {
+                    cell.setOpened();
+                    this.cellsIteration(row + this.BOTTOM, col + this.RIGHT, adapterView);
+                }
+
+                if (col >= 1 && row < this.board.getRows() - 1)
+                {
+                    cell.setOpened();
+                    this.cellsIteration(row + this.BOTTOM, col + this.LEFT, adapterView);
+                }
+
+                if (col < this.board.getNumColumns() - 1 && row >= 1)
+                {
+                    cell.setOpened();
+                    this.cellsIteration(row + this.TOP, col + this.RIGHT, adapterView);
+                }
+
+                if (col >= 1 && row >= 1)
+                {
+                    cell.setOpened();
+                    this.cellsIteration(row + this.TOP, col + this.LEFT, adapterView);
+                }
+
+                cell.setCellVisitedByIterator();
             }
-            child.startAnimation(this.openCell);
         }
     }
 
-    public boolean setFlagOnBoard(View view, boolean cellOpened, boolean isHaveFlag)
+    public ArrayList<View> getEmptyCellView()
     {
-        if(!cellOpened)
+        return this.emptyCellView;
+    }
+
+    public ArrayList<View> getMinesAroundView()
+    {
+        return this.minesAroundView;
+    }
+
+    public ArrayList<Integer> getMinesValue()
+    {
+        return this.minesValue;
+    }
+
+    private void selectAdjacentCells(ArrayList<CellParam> adjacentMinesCells, int row, int col)
+    {
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col + this.RIGHT));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col + this.LEFT));
+
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col + this.RIGHT));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col + this.LEFT));
+
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row, col + this.LEFT));
+        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row, col + this.RIGHT));
+    }
+
+    private void AddCellParam(ArrayList<CellParam> adjacentMinesCells, CellParam cell)
+    {
+        if (cell != null)
         {
-            return false;
+            adjacentMinesCells.add(cell);
+        }
+    }
+
+    private void checkMines(ArrayList<CellParam> adjacentMinesCells, int row, int col)
+    {
+        for (CellParam iteratedCell : adjacentMinesCells)
+        {
+            if (iteratedCell.isHaveMine())
+            {
+                this.adjacentMinesCounter++;
+            }
         }
 
-        if(!isHaveFlag)
+        if (this.adjacentMinesCounter > 0)
         {
-            view.setBackgroundResource(R.drawable.flag);
+            this.board.setMinesAroundById(row, col);
         }
-        else
-        {
-            view.setBackgroundResource(R.drawable.closedcell);
-        }
-        return true;
+    }
+
+    public int transformToCoordRow(int cellPosition)
+    {
+        return cellPosition / this.board.getNumColumns();
+    }
+
+    public int transformToCoordCol(int cellPosition)
+    {
+        return cellPosition % this.board.getNumColumns();
     }
 }
