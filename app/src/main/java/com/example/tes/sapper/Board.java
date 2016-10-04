@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Board
 {
-    private int amountOfCells, numColumns, amountOfMines, rows;
+    private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft, flagsLeftNaturalSize;
 
     private ArrayList<ArrayList<CellParam>> cells;
 
@@ -22,6 +22,8 @@ public class Board
     {
         int minesAmount = this.amountOfCells / this.amountOfMines;
         int availableRow = this.amountOfCells / this.numColumns;
+        this.flagsLeft = minesAmount;
+        this.flagsLeftNaturalSize = flagsLeft;
 
         for (int i = 0; i < minesAmount; i++)
         {
@@ -101,7 +103,16 @@ public class Board
 
     public void raiseOrPutDownFlagById(int row, int col)
     {
-        this.getCellById(row, col).raiseOrPutDownFlag();
+        if(this.flagsLeft < this.flagsLeftNaturalSize && this.getCellById(row, col).isHaveFlag())
+        {
+            this.getCellById(row, col).putDownFlag();
+            this.flagsLeft++;
+        }
+        else if(this.flagsLeft > 0  && !this.getCellById(row, col).isHaveFlag())
+        {
+            this.getCellById(row, col).raiseFlag();
+            this.flagsLeft--;
+        }
     }
 
     public CellParam getCellById(int row ,int col)
@@ -127,5 +138,10 @@ public class Board
     public int getNumColumns()
     {
         return this.numColumns;
+    }
+
+    public int getFlagsLeft()
+    {
+        return flagsLeft;
     }
 }
