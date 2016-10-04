@@ -27,7 +27,7 @@ public class Board
 
         for (int i = 0; i < minesAmount; i++)
         {
-            int mineRow = (int) (Math.random() * (availableRow - 1));
+            int mineRow = (int) (Math.random() * (availableRow));
             int mineCol = (int) (Math.random() * (this.numColumns));
 
             if(this.getCellById(mineRow, mineCol)!= null && !this.getCellById(mineRow, mineCol).isHaveMine())
