@@ -33,9 +33,14 @@ public class CellParam
         return flag;
     }
 
-    public void raiseOrPutDownFlag()
+    public void raiseFlag()
     {
-        this.flag = ! this.flag;
+        this.flag = true;
+    }
+
+    public void putDownFlag()
+    {
+        this.flag = false;
     }
 
     public boolean isOpened()

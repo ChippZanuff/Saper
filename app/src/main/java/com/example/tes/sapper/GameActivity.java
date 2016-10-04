@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private Board board;
     private ImageAdapter adapter;
     private GameMechanics mechanics;
+    private TextView flagsCounter;
     private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
     private boolean gameOver;
     private enum minesAmount
@@ -44,6 +46,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
         this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS);
 
+        this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
+        this.setFlagsAmount();
+
         this.mechanics = new GameMechanics(this.board);
     }
 
@@ -67,7 +72,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
         if(!this.board.isCellOpened(xCoord, yCoord));
         {
-            if(!this.board.haveCellFlagById(xCoord, yCoord))
+            if(!this.board.haveCellFlagById(xCoord, yCoord) && this.board.getFlagsLeft() > 0)
             {
                 view.setBackgroundResource(R.drawable.flag);
             }
@@ -77,6 +82,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
             }
 
             this.board.raiseOrPutDownFlagById(xCoord, yCoord);
+            this.setFlagsAmount();
         }
         return true;
     }
@@ -120,6 +126,12 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         minesAroundAmount.clear();
         minesAroundView.clear();
 
+    }
+
+    private void setFlagsAmount()
+    {
+        String flagsLeft = "Flags left: " + String.valueOf(this.board.getFlagsLeft());
+        this.flagsCounter.setText(flagsLeft);
     }
 
     private void setNumAdjacentMines(View iteratedView, int adjacentMinesCounter)
