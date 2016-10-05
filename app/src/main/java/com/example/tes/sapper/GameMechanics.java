@@ -31,7 +31,7 @@ public class GameMechanics
         View iteratedView = adapterView.getChildAt(transformedIndex);
 
         cell = this.board.getCellById(row, col);
-        if (!cell.isCellVisitedByIterator() && !cell.isOpened() && !cell.isHaveFlag() && !cell.isHaveMine())
+        if (!cell.isCellVisitedByIterator() && !cell.isOpen() && !cell.hasFlag() && !cell.hasMine())
         {
             this.selectAdjacentCells(adjacentMinesCells, row, col);
 
@@ -49,59 +49,61 @@ public class GameMechanics
 
             this.adjacentMinesCounter = 0;
 
-            if (!cell.isMinesAround())
+            if (cell.isMinesAround())
             {
-                if (col < this.board.getNumColumns() - 1)
-                {
-                    cell.setOpened();
-                    this.cellsIteration(row, col + this.RIGHT, adapterView);
-                }
-
-                if (row < this.board.getRows() - 1)
-                {
-                    cell.setOpened();
-                    this.cellsIteration(row + this.BOTTOM, col, adapterView);
-                }
-
-                if (row >= 1)
-                {
-                    cell.setOpened();
-                    this.cellsIteration(row + this.TOP, col, adapterView);
-                }
-
-                if (col >= 1)
-                {
-                    cell.setOpened();
-                    this.cellsIteration(row, col + this.LEFT, adapterView);
-                }
-
-
-                if (col < this.board.getNumColumns() - 1 && row < this.board.getRows() - 1)
-                {
-                    cell.setOpened();
-                    this.cellsIteration(row + this.BOTTOM, col + this.RIGHT, adapterView);
-                }
-
-                if (col >= 1 && row < this.board.getRows() - 1)
-                {
-                    cell.setOpened();
-                    this.cellsIteration(row + this.BOTTOM, col + this.LEFT, adapterView);
-                }
-
-                if (col < this.board.getNumColumns() - 1 && row >= 1)
-                {
-                    cell.setOpened();
-                    this.cellsIteration(row + this.TOP, col + this.RIGHT, adapterView);
-                }
-
-                if (col >= 1 && row >= 1)
-                {
-                    cell.setOpened();
-                    this.cellsIteration(row + this.TOP, col + this.LEFT, adapterView);
-                }
-
-                cell.setCellVisitedByIterator();
+                return;
             }
+
+            if (col < this.board.getNumColumns() - 1)
+            {
+                cell.makeOpen();
+                this.cellsIteration(row, col + this.RIGHT, adapterView);
+            }
+
+            if (row < this.board.getRows() - 1)
+            {
+                cell.makeOpen();
+                this.cellsIteration(row + this.BOTTOM, col, adapterView);
+            }
+
+            if (row >= 1)
+            {
+                cell.makeOpen();
+                this.cellsIteration(row + this.TOP, col, adapterView);
+            }
+
+            if (col >= 1)
+            {
+                cell.makeOpen();
+                this.cellsIteration(row, col + this.LEFT, adapterView);
+            }
+
+
+            if (col < this.board.getNumColumns() - 1 && row < this.board.getRows() - 1)
+            {
+                cell.makeOpen();
+                this.cellsIteration(row + this.BOTTOM, col + this.RIGHT, adapterView);
+            }
+
+            if (col >= 1 && row < this.board.getRows() - 1)
+            {
+                cell.makeOpen();
+                this.cellsIteration(row + this.BOTTOM, col + this.LEFT, adapterView);
+            }
+
+            if (col < this.board.getNumColumns() - 1 && row >= 1)
+            {
+                cell.makeOpen();
+                this.cellsIteration(row + this.TOP, col + this.RIGHT, adapterView);
+            }
+
+            if (col >= 1 && row >= 1)
+            {
+                cell.makeOpen();
+                this.cellsIteration(row + this.TOP, col + this.LEFT, adapterView);
+            }
+
+            cell.setCellVisitedByIterator();
         }
     }
 
@@ -146,7 +148,7 @@ public class GameMechanics
     {
         for (CellParam iteratedCell : adjacentMinesCells)
         {
-            if (iteratedCell.isHaveMine())
+            if (iteratedCell.hasMine())
             {
                 this.adjacentMinesCounter++;
             }
