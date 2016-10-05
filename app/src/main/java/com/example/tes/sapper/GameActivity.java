@@ -103,7 +103,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
         CellParam clickedCell = this.board.getCellById(xCoord,yCoord);
 
-        if(clickedCell.isHaveMine() && !clickedCell.isHaveFlag())
+        if(clickedCell.hasMine() && !clickedCell.hasFlag())
         {
             this.openField(adapterView);
             this.createMenuAfterGameOver();
@@ -137,7 +137,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
     private void winCondition()
     {
-        if(this.board.isFlaggedCellsAreMined())
+        if(this.board.isAllCellsDemined())
         {
             this.createMenuAfterGameOver();
         }
