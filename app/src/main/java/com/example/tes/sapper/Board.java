@@ -7,7 +7,6 @@ public class Board
     private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft;
 
     private ArrayList<ArrayList<CellParam>> cells;
-    private ArrayList<CellParam> minedCells;
 
     public Board(int amountOfCells, int amountOfMines, int rows, int numColumns)
     {
@@ -103,16 +102,16 @@ public class Board
         return this.getCellById(row, col).hasFlag();
     }
 
-    public void raiseOrPutDownFlagById(int row, int col)
+    public void raiseOrPutDownFlagById(CellParam cell)
     {
-        if(this.flagsLeft < this.minedCells.size() && this.getCellById(row, col).hasFlag())
+        if(cell.hasFlag())
         {
-            this.getCellById(row, col).putDownFlag();
+            cell.putDownFlag();
             this.flagsLeft++;
         }
-        else if(this.flagsLeft > 0  && !this.getCellById(row, col).hasFlag())
+        else if(this.flagsLeft > 0  && !cell.hasFlag())
         {
-            this.getCellById(row, col).raiseFlag();
+            cell.raiseFlag();
             this.flagsLeft--;
         }
     }
@@ -149,11 +148,17 @@ public class Board
 
     public boolean isAllCellsDemined()
     {
-        for(CellParam cell : this.minedCells)
+        CellParam cell;
+        for(int i = 0; i < this.cells.size(); i++)
         {
-            if(cell.hasFlag() && !cell.hasMine())
+            for (int j = 0; j < this.cells.get(i).size(); j++)
             {
-                return false;
+                cell = this.cells.get(i).get(j);
+
+                if (cell.hasFlag() && !cell.hasMine())
+                {
+                    return false;
+                }
             }
         }
 
