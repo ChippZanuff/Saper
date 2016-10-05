@@ -2,6 +2,7 @@ package com.example.tes.sapper;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,6 +85,14 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
             this.board.raiseOrPutDownFlagById(xCoord, yCoord);
             this.setFlagsAmount();
         }
+
+        this.winCondition();
+
+        if(this.gameOver)
+        {
+            this.openField(adapterView);
+        }
+
         return true;
     }
 
@@ -125,7 +134,15 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         emptyCellView.clear();
         minesAroundAmount.clear();
         minesAroundView.clear();
+    }
 
+    private void winCondition()
+    {
+        Log.d("Win phase", this.board.isFlaggedCellsAreMined() + "");
+        if(this.board.isFlaggedCellsAreMined())
+        {
+            this.createMenuAfterGameOver();
+        }
     }
 
     private void setFlagsAmount()

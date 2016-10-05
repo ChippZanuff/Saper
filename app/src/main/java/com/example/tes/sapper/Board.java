@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 public class Board
 {
-    private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft, flagsLeftNaturalSize;
+    private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft;
 
     private ArrayList<ArrayList<CellParam>> cells;
+    private ArrayList<CellParam> minedCells;
 
     public Board(int amountOfCells, int amountOfMines, int rows, int numColumns)
     {
@@ -22,8 +23,7 @@ public class Board
     {
         int minesAmount = this.amountOfCells / this.amountOfMines;
         int availableRow = this.amountOfCells / this.numColumns;
-        this.flagsLeft = minesAmount;
-        this.flagsLeftNaturalSize = flagsLeft;
+        this.minedCells = new ArrayList<>();
 
         for (int i = 0; i < minesAmount; i++)
         {
@@ -32,9 +32,12 @@ public class Board
 
             if(this.getCellById(mineRow, mineCol)!= null && !this.getCellById(mineRow, mineCol).isHaveMine())
             {
+                this.minedCells.add(this.getCellById(mineRow, mineCol));
                 this.setMineById(mineRow, mineCol);
             }
         }
+
+        this.flagsLeft = this.minedCells.size();
     }
 
     private ArrayList<ArrayList<CellParam>> fieldCreate()
@@ -103,7 +106,7 @@ public class Board
 
     public void raiseOrPutDownFlagById(int row, int col)
     {
-        if(this.flagsLeft < this.flagsLeftNaturalSize && this.getCellById(row, col).isHaveFlag())
+        if(this.flagsLeft < this.minedCells.size() && this.getCellById(row, col).isHaveFlag())
         {
             this.getCellById(row, col).putDownFlag();
             this.flagsLeft++;
@@ -143,5 +146,28 @@ public class Board
     public int getFlagsLeft()
     {
         return flagsLeft;
+    }
+
+    private boolean isFlagsNoLeft()
+    {
+        return this.getFlagsLeft() == 0;
+    }
+
+    public boolean isFlaggedCellsAreMined()
+    {
+        if(this.isFlagsNoLeft())
+        {
+            for(CellParam cell : this.minedCells)
+            {
+                if(!cell.isHaveFlag())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
