@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Board
 {
-    private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft, flagsLeftNaturalSize;
+    private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft;
 
     private ArrayList<ArrayList<CellParam>> cells;
 
@@ -22,17 +22,23 @@ public class Board
     {
         int minesAmount = this.amountOfCells / this.amountOfMines;
         int availableRow = this.amountOfCells / this.numColumns;
-        this.flagsLeft = minesAmount;
-        this.flagsLeftNaturalSize = flagsLeft;
+        CellParam cell;
 
-        for (int i = 0; i < minesAmount; i++)
+        while(true)
         {
             int mineRow = (int) (Math.random() * (availableRow));
             int mineCol = (int) (Math.random() * (this.numColumns));
+            cell = this.getCellById(mineRow, mineCol);
 
-            if(this.getCellById(mineRow, mineCol)!= null && !this.getCellById(mineRow, mineCol).isHaveMine())
+            if(cell!= null && !cell.hasMine())
             {
-                this.setMineById(mineRow, mineCol);
+                cell.setMine();
+                this.flagsLeft++;
+            }
+
+            if(this.flagsLeft == minesAmount)
+            {
+                break;
             }
         }
     }
@@ -57,11 +63,6 @@ public class Board
         return field;
     }
 
-    private void setMineById(int row ,int col)
-    {
-        this.getCellById(row, col).setMine();
-    }
-
     public boolean isCellExists(int row, int column)
     {
         if(row >= 0 && row < this.getRows() && column >= 0 && column < this.getNumColumns())
@@ -73,12 +74,12 @@ public class Board
 
     public boolean isCellOpened(int row, int col)
     {
-        return this.getCellById(row, col).isOpened();
+        return this.getCellById(row, col).isOpen();
     }
 
     public void setCellOpened(int row, int col)
     {
-        this.getCellById(row, col).setOpened();
+        this.getCellById(row, col).makeOpen();
     }
 
     public void setMinesAroundById(int row, int col)
@@ -88,7 +89,7 @@ public class Board
 
     public boolean haveCellMineById(int row, int column)
     {
-        return this.getCellById(row, column).isHaveMine();
+        return this.getCellById(row, column).hasMine();
     }
 
     public boolean isMinesAround(int row, int col)
@@ -98,19 +99,19 @@ public class Board
 
     public boolean haveCellFlagById(int row, int col)
     {
-        return this.getCellById(row, col).isHaveFlag();
+        return this.getCellById(row, col).hasFlag();
     }
 
-    public void raiseOrPutDownFlagById(int row, int col)
+    public void raiseOrPutDownFlagById(CellParam cell)
     {
-        if(this.flagsLeft < this.flagsLeftNaturalSize && this.getCellById(row, col).isHaveFlag())
+        if(cell.hasFlag())
         {
-            this.getCellById(row, col).putDownFlag();
+            cell.putDownFlag();
             this.flagsLeft++;
         }
-        else if(this.flagsLeft > 0  && !this.getCellById(row, col).isHaveFlag())
+        else if(this.flagsLeft > 0  && !cell.hasFlag())
         {
-            this.getCellById(row, col).raiseFlag();
+            cell.raiseFlag();
             this.flagsLeft--;
         }
     }
@@ -143,5 +144,24 @@ public class Board
     public int getFlagsLeft()
     {
         return flagsLeft;
+    }
+
+    public boolean isAllCellsDemined()
+    {
+        CellParam cell;
+        for(int i = 0; i < this.cells.size(); i++)
+        {
+            for (int j = 0; j < this.cells.get(i).size(); j++)
+            {
+                cell = this.cells.get(i).get(j);
+
+                if (cell.hasFlag() && !cell.hasMine())
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
