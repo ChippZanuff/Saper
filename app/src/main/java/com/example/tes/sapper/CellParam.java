@@ -18,7 +18,7 @@ public class CellParam
         this.isCellVisitedByIterator = false;
     }
 
-    public boolean isHaveMine()
+    public boolean hasMine()
     {
         return mine;
     }
@@ -28,7 +28,7 @@ public class CellParam
         this.mine = true;
     }
 
-    public boolean isHaveFlag()
+    public boolean hasFlag()
     {
         return flag;
     }
@@ -43,12 +43,12 @@ public class CellParam
         this.flag = false;
     }
 
-    public boolean isOpened()
+    public boolean isOpen()
     {
         return isOpened;
     }
 
-    public void setOpened()
+    public void makeOpen()
     {
         isOpened = true;
     }
