@@ -148,20 +148,24 @@ public class Board
 
     public boolean isAllCellsDemined()
     {
-        CellParam cell;
-        for(int i = 0; i < this.cells.size(); i++)
+        if(this.flagsLeft == 0)
         {
-            for (int j = 0; j < this.cells.get(i).size(); j++)
+            CellParam cell;
+            for (int i = 0; i < this.cells.size(); i++)
             {
-                cell = this.cells.get(i).get(j);
-
-                if (cell.hasFlag() && !cell.hasMine())
+                for (int j = 0; j < this.cells.get(i).size(); j++)
                 {
-                    return false;
+                    cell = this.cells.get(i).get(j);
+
+                    if (cell.hasFlag() && !cell.hasMine())
+                    {
+                        return false;
+                    }
                 }
             }
+            return true;
         }
 
-        return true;
+        return false;
     }
 }
