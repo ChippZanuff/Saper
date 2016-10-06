@@ -5,4 +5,6 @@
     <string name="quit">Quit</string>
     <string name="Cell"/>
     <string name="retry">Retry?</string>
+    <string name="win">You Win!</string>
+    <string name="lose">You Lose!</string>
 </resources>
