@@ -16,12 +16,12 @@ import java.util.ArrayList;
 
 public class GameActivity extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
 {
-    private Animation openCell, scaleCongrats;
+    private Animation openCell;
     private GridView gridField;
     private Board board;
     private ImageAdapter adapter;
     private GameMechanics mechanics;
-    private TextView flagsCounter, congrats;
+    private TextView flagsCounter;
     private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
     private boolean gameOver;
     private enum minesAmount
@@ -42,9 +42,6 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.gridField.setAdapter(this.adapter);
         this.gridField.setOnItemClickListener(this);
         this.gridField.setOnItemLongClickListener(this);
-
-        this.congrats = (TextView) findViewById(R.id.congrats);
-        this.congrats.setVisibility(View.INVISIBLE);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
         this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS);
@@ -221,7 +218,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
             this.gameOver = true;
             int wrapContent = LinearLayout.LayoutParams.WRAP_CONTENT;
             int gravity = Gravity.RIGHT;
-            this.scaleCongrats = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale);
+
+            Animation scaleCongrats = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale);
+
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(wrapContent, wrapContent);
             params.gravity = gravity;
 
@@ -232,8 +231,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
             LinearLayout llMain = (LinearLayout) findViewById(R.id.gameActivityLinearLayout);
             llMain.addView(layout);
-            this.congrats.setVisibility(View.VISIBLE);
-            this.congrats.startAnimation(this.scaleCongrats);
+            TextView congrats = (TextView) findViewById(R.id.congrats);
+            congrats.setVisibility(View.VISIBLE);
+            congrats.startAnimation(scaleCongrats);
         }
     }
 
