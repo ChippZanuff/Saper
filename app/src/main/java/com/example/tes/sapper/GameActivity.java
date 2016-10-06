@@ -218,6 +218,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
             this.gameOver = true;
             int wrapContent = LinearLayout.LayoutParams.WRAP_CONTENT;
             int gravity = Gravity.RIGHT;
+
+            Animation scaleCongrats = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale);
+
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(wrapContent, wrapContent);
             params.gravity = gravity;
 
@@ -228,6 +231,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
             LinearLayout llMain = (LinearLayout) findViewById(R.id.gameActivityLinearLayout);
             llMain.addView(layout);
+            TextView congrats = (TextView) findViewById(R.id.congrats);
+            congrats.setVisibility(View.VISIBLE);
+            congrats.startAnimation(scaleCongrats);
         }
     }
 

@@ -148,8 +148,13 @@ public class Board
 
     public boolean isAllCellsDemined()
     {
+        if(this.flagsLeft > 0)
+        {
+            return false;
+        }
+
         CellParam cell;
-        for(int i = 0; i < this.cells.size(); i++)
+        for (int i = 0; i < this.cells.size(); i++)
         {
             for (int j = 0; j < this.cells.get(i).size(); j++)
             {
