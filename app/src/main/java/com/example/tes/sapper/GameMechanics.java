@@ -156,7 +156,8 @@ public class GameMechanics
 
         if (this.adjacentMinesCounter > 0)
         {
-            this.board.setMinesAroundById(row, col);
+            CellParam cell = this.board.getCellById(row, col);
+            cell.setMinesAround();
         }
     }
 

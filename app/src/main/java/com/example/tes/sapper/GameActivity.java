@@ -23,7 +23,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private GameMechanics mechanics;
     private TextView flagsCounter;
     private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
-    private boolean gameOver;
+    private boolean gameOver, isVictory;
     private enum minesAmount
     {;
         private static final int one = 1, two = 2, three = 3, four = 4, five = 5;
@@ -142,6 +142,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         if(this.board.isAllCellsDemined())
         {
+            this.isVictory = true;
             this.createMenuAfterGameOver();
         }
     }
@@ -178,31 +179,38 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         int xCoord;
         int yCoord;
+        CellParam cell;
 
         for (int i = 0; i < this.board.getAmountOfCells(); i++)
         {
             xCoord = i / this.board.getNumColumns();
             yCoord = i % this.board.getNumColumns();
+            cell = this.board.getCellById(xCoord, yCoord);
 
-            if(this.board.isCellOpened(xCoord, yCoord) || this.board.isMinesAround(xCoord, yCoord))
+            if(cell.isOpen() || cell.isMinesAround())
             {
                 continue;
             }
 
             View child = adapterView.getChildAt(i);
-            this.board.setCellOpened(xCoord, yCoord);
+            cell.makeOpen();
 
-            if(this.board.haveCellMineById(xCoord, yCoord))
+            if(cell.hasMine())
             {
                 child.setBackgroundResource(R.drawable.mine);
             }
 
-            if(this.board.haveCellFlagById(xCoord, yCoord) || this.board.haveCellMineById(xCoord, yCoord) && this.board.haveCellFlagById(xCoord, yCoord))
+            if(cell.hasFlag())
             {
                 child.setBackgroundResource(R.drawable.flag);
             }
 
-            if(!this.board.haveCellMineById(xCoord, yCoord))
+            if(cell.hasMine() && cell.hasFlag())
+            {
+                child.setBackgroundResource(R.drawable.demined);
+            }
+
+            if(!cell.hasMine())
             {
                 child.setBackgroundResource(R.drawable.openedcell);
             }
@@ -233,6 +241,15 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
             llMain.addView(layout);
             TextView congrats = (TextView) findViewById(R.id.congrats);
             congrats.setVisibility(View.VISIBLE);
+
+            if(this.isVictory)
+            {
+                congrats.setText(R.string.win);
+            } else
+            {
+                congrats.setText(R.string.lose);
+            }
+
             congrats.startAnimation(scaleCongrats);
         }
     }
