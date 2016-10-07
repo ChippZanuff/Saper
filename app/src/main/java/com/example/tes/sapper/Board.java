@@ -72,36 +72,6 @@ public class Board
         return false;
     }
 
-    public boolean isCellOpened(int row, int col)
-    {
-        return this.getCellById(row, col).isOpen();
-    }
-
-    public void setCellOpened(int row, int col)
-    {
-        this.getCellById(row, col).makeOpen();
-    }
-
-    public void setMinesAroundById(int row, int col)
-    {
-        this.getCellById(row, col).setMinesAround();
-    }
-
-    public boolean haveCellMineById(int row, int column)
-    {
-        return this.getCellById(row, column).hasMine();
-    }
-
-    public boolean isMinesAround(int row, int col)
-    {
-        return this.getCellById(row, col).isMinesAround();
-    }
-
-    public boolean haveCellFlagById(int row, int col)
-    {
-        return this.getCellById(row, col).hasFlag();
-    }
-
     public void raiseOrPutDownFlagById(CellParam cell)
     {
         if(cell.hasFlag())

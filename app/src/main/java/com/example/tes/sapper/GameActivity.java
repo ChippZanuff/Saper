@@ -179,36 +179,38 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         int xCoord;
         int yCoord;
+        CellParam cell;
 
         for (int i = 0; i < this.board.getAmountOfCells(); i++)
         {
             xCoord = i / this.board.getNumColumns();
             yCoord = i % this.board.getNumColumns();
+            cell = this.board.getCellById(xCoord, yCoord);
 
-            if(this.board.isCellOpened(xCoord, yCoord) || this.board.isMinesAround(xCoord, yCoord))
+            if(cell.isOpen() || cell.isMinesAround())
             {
                 continue;
             }
 
             View child = adapterView.getChildAt(i);
-            this.board.setCellOpened(xCoord, yCoord);
+            cell.makeOpen();
 
-            if(this.board.haveCellMineById(xCoord, yCoord))
+            if(cell.hasMine())
             {
                 child.setBackgroundResource(R.drawable.mine);
             }
 
-            if(this.board.haveCellFlagById(xCoord, yCoord))
+            if(cell.hasFlag())
             {
                 child.setBackgroundResource(R.drawable.flag);
             }
 
-            if(this.board.haveCellMineById(xCoord, yCoord) && this.board.haveCellFlagById(xCoord, yCoord))
+            if(cell.hasMine() && cell.hasFlag())
             {
                 child.setBackgroundResource(R.drawable.demined);
             }
 
-            if(!this.board.haveCellMineById(xCoord, yCoord))
+            if(!cell.hasMine())
             {
                 child.setBackgroundResource(R.drawable.openedcell);
             }
