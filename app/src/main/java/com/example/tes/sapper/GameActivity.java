@@ -1,6 +1,7 @@
 package com.example.tes.sapper;
 
 import android.app.Activity;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,6 +22,8 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private Board board;
     private ImageAdapter adapter;
     private GameMechanics mechanics;
+    private AudioManager audioManager;
+    private MyMediaPlayer myMediaPlayer;
     private TextView flagsCounter;
     private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
     private boolean gameOver, isVictory;
@@ -30,10 +33,34 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     }
 
     @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        this.myMediaPlayer.release();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        this.myMediaPlayer.pause();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        this.myMediaPlayer.resume();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamefield);
+        this.audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        this.myMediaPlayer = new MyMediaPlayer();
+        this.myMediaPlayer.playBGMusic(this);
 
         this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT);
         this.gameOver = false;
@@ -108,6 +135,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
         if(clickedCell.hasMine() && !clickedCell.hasFlag())
         {
+            this.myMediaPlayer.playExplosion(this);
             this.openField(adapterView);
             this.createMenuAfterGameOver();
             return;
