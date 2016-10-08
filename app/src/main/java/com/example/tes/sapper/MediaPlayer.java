@@ -1,15 +1,17 @@
 package com.example.tes.sapper;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 
-public class MyMediaPlayer
+public class MediaPlayer
 {
-    private MediaPlayer mediaPlayer;
+    private android.media.MediaPlayer mediaPlayer;
     private int explosion, backgroundMusic;
+    private Logger log;
+    private final String TAG = this.getClass().getSimpleName();
 
-    public MyMediaPlayer()
+    public MediaPlayer(Logger log)
     {
+        this.log = log;
         this.explosion = R.raw.explosion;
         this.backgroundMusic = R.raw.vabankmp3;
     }
@@ -25,7 +27,7 @@ public class MyMediaPlayer
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                log.error(this.TAG, "Release method exception", e);
             }
         }
     }
@@ -33,13 +35,13 @@ public class MyMediaPlayer
     public void playExplosion(Context context)
     {
         this.release();
-        this.mediaPlayer = MediaPlayer.create(context, this.explosion);
+        this.mediaPlayer = android.media.MediaPlayer.create(context, this.explosion);
         this.mediaPlayer.start();
     }
 
     public void playBGMusic(Context context)
     {
-        this.mediaPlayer = MediaPlayer.create(context, this.backgroundMusic);
+        this.mediaPlayer = android.media.MediaPlayer.create(context, this.backgroundMusic);
         this.mediaPlayer.start();
     }
 
