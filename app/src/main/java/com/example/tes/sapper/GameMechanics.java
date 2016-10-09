@@ -48,6 +48,7 @@ public class GameMechanics
                 this.minesAroundView.add(iteratedView);
                 this.minesValue.add(this.adjacentMinesCounter);
                 cell.setMinesAround();
+                cell.makeOpen();
             }
 
             this.adjacentMinesCounter = 0;
