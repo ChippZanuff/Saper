@@ -1,7 +1,6 @@
 package com.example.tes.sapper;
 
 import android.app.Activity;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,8 +21,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private Board board;
     private ImageAdapter adapter;
     private GameMechanics mechanics;
-    private AudioManager audioManager;
-    private MyMediaPlayer myMediaPlayer;
+    private final String TAG = this.getClass().getSimpleName();
+    private Logger log;
+    private MediaPlayer myMediaPlayer;
     private TextView flagsCounter;
     private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
     private boolean gameOver, isVictory;
@@ -58,9 +58,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamefield);
-        this.audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        this.myMediaPlayer = new MyMediaPlayer();
+        this.myMediaPlayer = new MediaPlayer(this.log);
         this.myMediaPlayer.playBGMusic(this);
+        this.log = new Logger();
 
         this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT);
         this.gameOver = false;
@@ -71,12 +71,12 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.gridField.setOnItemLongClickListener(this);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
-        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS);
+        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS, this.log);
 
         this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
         this.setFlagsAmount();
 
-        this.mechanics = new GameMechanics(this.board);
+        this.mechanics = new GameMechanics(this.board, this. log);
     }
 
     public void onClick(View view)
@@ -94,21 +94,25 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int cellPosition, long l)
     {
+        this.log.info(this.TAG, "Item long click is performed");
         int xCoord = this.mechanics.transformToCoordRow(cellPosition);
         int yCoord = this.mechanics.transformToCoordCol(cellPosition);
         CellParam cell = this.board.getCellById(xCoord, yCoord);
 
         if(cell == null || cell.isOpen())
         {
+            this.log.info(this.TAG, "Cell is opened or equals null, end method");
             return true;
         }
 
         if(!cell.hasFlag() && this.board.getFlagsLeft() > 0)
         {
+            this.log.info(this.TAG, "Flag image is set");
             view.setBackgroundResource(R.drawable.flag);
         }
         else
         {
+            this.log.info(this.TAG, "Closed cell image is set");
             view.setBackgroundResource(R.drawable.closedcell);
         }
 
@@ -128,6 +132,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int cellPosition, long l)
     {
+        this.log.info(this.TAG, "Item click is performed");
         int xCoord = this.mechanics.transformToCoordRow(cellPosition);
         int yCoord = this.mechanics.transformToCoordCol(cellPosition);
 
@@ -135,6 +140,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
         if(clickedCell.hasMine() && !clickedCell.hasFlag())
         {
+            this.log.info(this.TAG, "Mined cell is clicked, lose acquired");
             this.myMediaPlayer.playExplosion(this);
             this.openField(adapterView);
             this.createMenuAfterGameOver();
@@ -170,6 +176,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         if(this.board.isAllCellsDemined())
         {
+            this.log.info(this.TAG, "All mines deactivated, victory acquired");
             this.isVictory = true;
             this.createMenuAfterGameOver();
         }

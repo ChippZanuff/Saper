@@ -5,11 +5,13 @@ import java.util.ArrayList;
 public class Board
 {
     private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft;
-
+    private final String TAG = this.getClass().getSimpleName();
+    private Logger log;
     private ArrayList<ArrayList<CellParam>> cells;
 
-    public Board(int amountOfCells, int amountOfMines, int rows, int numColumns)
+    public Board(int amountOfCells, int amountOfMines, int rows, int numColumns, Logger log)
     {
+        this.log = log;
         this.amountOfCells = amountOfCells;
         this.amountOfMines = amountOfMines;
         this.numColumns = numColumns;
@@ -76,11 +78,13 @@ public class Board
     {
         if(cell.hasFlag())
         {
+            this.log.info(this.TAG, "Flag is put downed");
             cell.putDownFlag();
             this.flagsLeft++;
         }
         else if(this.flagsLeft > 0  && !cell.hasFlag())
         {
+            this.log.info(this.TAG, "Flag is raised");
             cell.raiseFlag();
             this.flagsLeft--;
         }
