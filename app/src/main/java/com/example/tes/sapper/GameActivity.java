@@ -25,7 +25,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private Logger log;
     private MediaPlayer myMediaPlayer;
     private TextView flagsCounter;
-    private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
+    private Preferences preferences;
     private boolean gameOver, isVictory;
     private enum minesAmount
     {;
@@ -33,36 +33,17 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     }
 
     @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        this.myMediaPlayer.release();
-    }
-
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-        this.myMediaPlayer.pause();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        this.myMediaPlayer.resume();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamefield);
+        this.preferences = new Preferences(this);
+
+        this.log = new Logger();
         this.myMediaPlayer = new MediaPlayer(this.log);
         this.myMediaPlayer.playBGMusic(this);
-        this.log = new Logger();
 
-        this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT);
+        this.adapter = new ImageAdapter(this, this.preferences.getIntValue(R.string.amountofcells));
         this.gameOver = false;
 
         this.gridField = (GridView) findViewById(R.id.field);
@@ -71,7 +52,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.gridField.setOnItemLongClickListener(this);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
-        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS, this.log);
+
+        this.board = new Board(this.preferences.getIntValue(R.string.amountofcells), this.preferences.getIntValue(R.string.amountofmines),
+                this.preferences.getIntValue(R.string.numrows), this.preferences.getIntValue(R.string.numcolumns), this.log);
 
         this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
         this.setFlagsAmount();
@@ -294,5 +277,26 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         LayoutInflater inflater = LayoutInflater.from(this);
         View lay = inflater.inflate(R.layout.gameoverbuttons, layout, false);
         layout.addView(lay);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        this.myMediaPlayer.release();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        this.myMediaPlayer.pause();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        this.myMediaPlayer.resume();
     }
 }

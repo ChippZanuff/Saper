@@ -7,4 +7,12 @@
     <string name="retry">Retry?</string>
     <string name="win">You Win!</string>
     <string name="lose">You Lose!</string>
+
+    <string name="amountofcells">AMOUNT_OF_CELLS</string>
+    <string name="amountofmines">AMOUNT_OF_MINES</string>
+    <string name="numcolumns">NUM_COLUMNS</string>
+    <string name="numrows">ROWS</string>
+    <string name="settings">Settings</string>
+
+
 </resources>
