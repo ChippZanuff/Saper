@@ -8,9 +8,10 @@ public class Board
     private Logger log;
     private ArrayList<ArrayList<CellParam>> cells;
 
-    public Board(int amountOfCells, int amountOfMines, int rows, int numColumns)
+    public Board(int amountOfCells, int amountOfMines, int rows, int numColumns, Logger log)
     {
-        this.log = new Logger(this.getClass().getSimpleName());
+        this.log = log;
+        this.log.setTAG(getClass().getSimpleName());
         this.amountOfCells = amountOfCells;
         this.amountOfMines = amountOfMines;
         this.numColumns = numColumns;
@@ -77,13 +78,11 @@ public class Board
     {
         if(cell.hasFlag())
         {
-            this.log.info("Flag is put downed");
             cell.putDownFlag();
             this.flagsLeft++;
         }
         else if(this.flagsLeft > 0  && !cell.hasFlag())
         {
-            this.log.info("Flag is raised");
             cell.raiseFlag();
             this.flagsLeft--;
         }

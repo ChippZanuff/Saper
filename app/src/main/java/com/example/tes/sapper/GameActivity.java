@@ -57,11 +57,13 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamefield);
-        this.myMediaPlayer = new MediaPlayer();
+        this.myMediaPlayer = new MediaPlayer(new Logger());
         this.myMediaPlayer.playBGMusic(this);
-        this.log = new Logger(this.getClass().getSimpleName());
 
-        this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT);
+        this.log = new Logger();
+        this.log.setTAG(getClass().getSimpleName());
+
+        this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT, new Logger());
         this.gameOver = false;
 
         this.gridField = (GridView) findViewById(R.id.field);
@@ -70,12 +72,12 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.gridField.setOnItemLongClickListener(this);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
-        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS);
+        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS, new Logger());
 
         this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
         this.setFlagsAmount();
 
-        this.mechanics = new GameMechanics(this.board);
+        this.mechanics = new GameMechanics(this.board, new Logger());
     }
 
     public void onClick(View view)
@@ -106,12 +108,12 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
         if(!cell.hasFlag() && this.board.getFlagsLeft() > 0)
         {
-            this.log.info("Flag image is set");
+            this.log.info("On cell " + xCoord + "," + yCoord + "flag image is set");
             view.setBackgroundResource(R.drawable.flag);
         }
         else
         {
-            this.log.info("Closed cell image is set");
+            this.log.info("On cell " + xCoord + "," + yCoord + "closed cell image is set");
             view.setBackgroundResource(R.drawable.closedcell);
         }
 

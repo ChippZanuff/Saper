@@ -6,11 +6,6 @@ public class Logger
 {
     private String TAG;
 
-    public Logger(String tag)
-    {
-        this.TAG = tag;
-    }
-
     public void info(String msg)
     {
         if(BuildConfig.USE_LOG)
@@ -25,5 +20,10 @@ public class Logger
         {
             Log.e(this.TAG, msg, e);
         }
+    }
+
+    public void setTAG(String tag)
+    {
+        this.TAG = tag;
     }
 }

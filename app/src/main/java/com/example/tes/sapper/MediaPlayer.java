@@ -8,9 +8,10 @@ public class MediaPlayer
     private int explosion, backgroundMusic;
     private Logger log;
 
-    public MediaPlayer()
+    public MediaPlayer(Logger log)
     {
-        this.log = new Logger(this.getClass().getSimpleName());
+        this.log = log;
+        this.log.setTAG(getClass().getSimpleName());
         this.explosion = R.raw.explosion;
         this.backgroundMusic = R.raw.vabankmp3;
     }
