@@ -21,7 +21,6 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private Board board;
     private ImageAdapter adapter;
     private GameMechanics mechanics;
-    private final String TAG = this.getClass().getSimpleName();
     private Logger log;
     private MediaPlayer myMediaPlayer;
     private TextView flagsCounter;
@@ -58,9 +57,9 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamefield);
-        this.myMediaPlayer = new MediaPlayer(this.log);
+        this.myMediaPlayer = new MediaPlayer();
         this.myMediaPlayer.playBGMusic(this);
-        this.log = new Logger();
+        this.log = new Logger(this.getClass().getSimpleName());
 
         this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT);
         this.gameOver = false;
@@ -71,12 +70,12 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.gridField.setOnItemLongClickListener(this);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
-        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS, this.log);
+        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS);
 
         this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
         this.setFlagsAmount();
 
-        this.mechanics = new GameMechanics(this.board, this. log);
+        this.mechanics = new GameMechanics(this.board);
     }
 
     public void onClick(View view)
@@ -94,25 +93,25 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int cellPosition, long l)
     {
-        this.log.info(this.TAG, "Item long click is performed");
+        this.log.info("Item long click is performed");
         int xCoord = this.mechanics.transformToCoordRow(cellPosition);
         int yCoord = this.mechanics.transformToCoordCol(cellPosition);
         CellParam cell = this.board.getCellById(xCoord, yCoord);
 
         if(cell == null || cell.isOpen())
         {
-            this.log.info(this.TAG, "Cell is opened or equals null, end method");
+            this.log.info("Cell is opened or equals null, end method");
             return true;
         }
 
         if(!cell.hasFlag() && this.board.getFlagsLeft() > 0)
         {
-            this.log.info(this.TAG, "Flag image is set");
+            this.log.info("Flag image is set");
             view.setBackgroundResource(R.drawable.flag);
         }
         else
         {
-            this.log.info(this.TAG, "Closed cell image is set");
+            this.log.info("Closed cell image is set");
             view.setBackgroundResource(R.drawable.closedcell);
         }
 
@@ -132,7 +131,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int cellPosition, long l)
     {
-        this.log.info(this.TAG, "Item click is performed");
+        this.log.info("Item click is performed");
         int xCoord = this.mechanics.transformToCoordRow(cellPosition);
         int yCoord = this.mechanics.transformToCoordCol(cellPosition);
 
@@ -140,7 +139,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
         if(clickedCell.hasMine() && !clickedCell.hasFlag())
         {
-            this.log.info(this.TAG, "Mined cell is clicked, lose acquired");
+            this.log.info("Mined cell is clicked, lose acquired");
             this.myMediaPlayer.playExplosion(this);
             this.openField(adapterView);
             this.createMenuAfterGameOver();
@@ -176,7 +175,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         if(this.board.isAllCellsDemined())
         {
-            this.log.info(this.TAG, "All mines deactivated, victory acquired");
+            this.log.info("All mines deactivated, victory acquired");
             this.isVictory = true;
             this.createMenuAfterGameOver();
         }

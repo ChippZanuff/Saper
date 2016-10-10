@@ -4,19 +4,26 @@ import android.util.Log;
 
 public class Logger
 {
-    public void info(String tag, String msg)
+    private String TAG;
+
+    public Logger(String tag)
+    {
+        this.TAG = tag;
+    }
+
+    public void info(String msg)
     {
         if(BuildConfig.USE_LOG)
         {
-            Log.i(tag, msg);
+            Log.i(this.TAG, msg);
         }
     }
 
-    public void error(String tag, String msg, Exception e)
+    public void error(String msg, Exception e)
     {
         if(BuildConfig.USE_LOG)
         {
-            Log.e(tag, msg, e);
+            Log.e(this.TAG, msg, e);
         }
     }
 }

@@ -11,19 +11,18 @@ public class GameMechanics
     private ArrayList<View> emptyCellView;
     private ArrayList<View> minesAroundView;
     private ArrayList<Integer> minesValue;
-    private final String TAG = this.getClass().getSimpleName();
     private Logger log;
     private int adjacentMinesCounter;
     private final int LEFT = -1, RIGHT = 1, TOP = -1, BOTTOM = 1;
 
-    public GameMechanics(Board board, Logger log)
+    public GameMechanics(Board board)
     {
         this.emptyCellView = new ArrayList<>();
         this.minesAroundView = new ArrayList<>();
         this.minesValue = new ArrayList<>();
         this.board = board;
         this.adjacentMinesCounter = 0;
-        this.log = log;
+        this.log = new Logger(this.getClass().getSimpleName());
     }
 
     public void cellsIteration(int row, int col, AdapterView<?> adapterView)

@@ -7,11 +7,10 @@ public class MediaPlayer
     private android.media.MediaPlayer mediaPlayer;
     private int explosion, backgroundMusic;
     private Logger log;
-    private final String TAG = this.getClass().getSimpleName();
 
-    public MediaPlayer(Logger log)
+    public MediaPlayer()
     {
-        this.log = log;
+        this.log = new Logger(this.getClass().getSimpleName());
         this.explosion = R.raw.explosion;
         this.backgroundMusic = R.raw.vabankmp3;
     }
@@ -27,7 +26,7 @@ public class MediaPlayer
             }
             catch (Exception e)
             {
-                log.error(this.TAG, "Release method exception", e);
+                log.error("Release method exception", e);
             }
         }
     }
