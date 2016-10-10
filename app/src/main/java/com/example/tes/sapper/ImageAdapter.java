@@ -11,14 +11,17 @@ public class ImageAdapter extends BaseAdapter
 {
     Context context;
     int countOfCell;
+    private Logger log;
     //int[] thumbIds;
 
-    public ImageAdapter(Context context, int numOfCells)
+    public ImageAdapter(Context context, int numOfCells, Logger log)
     {
         this.context = context;
         countOfCell = numOfCells;
 
         //this.thumbIds = new int[numOfCells];
+        this.log = log;
+        this.log.setTAG(getClass().getSimpleName());
     }
 
     @Override

@@ -5,11 +5,13 @@ import java.util.ArrayList;
 public class Board
 {
     private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft;
-
+    private Logger log;
     private ArrayList<ArrayList<CellParam>> cells;
 
-    public Board(int amountOfCells, int amountOfMines, int rows, int numColumns)
+    public Board(int amountOfCells, int amountOfMines, int rows, int numColumns, Logger log)
     {
+        this.log = log;
+        this.log.setTAG(getClass().getSimpleName());
         this.amountOfCells = amountOfCells;
         this.amountOfMines = amountOfMines;
         this.numColumns = numColumns;
