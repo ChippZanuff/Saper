@@ -95,14 +95,13 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int cellPosition, long l)
     {
-        this.log.info("Item long click is performed");
         int xCoord = this.mechanics.transformToCoordRow(cellPosition);
         int yCoord = this.mechanics.transformToCoordCol(cellPosition);
         CellParam cell = this.board.getCellById(xCoord, yCoord);
 
         if(cell == null || cell.isOpen())
         {
-            this.log.info("Cell is opened or equals null, end method");
+            this.log.info("Cell " + xCoord + ", " + yCoord + " is opened or equals null, end method");
             return true;
         }
 
@@ -133,7 +132,6 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int cellPosition, long l)
     {
-        this.log.info("Item click is performed");
         int xCoord = this.mechanics.transformToCoordRow(cellPosition);
         int yCoord = this.mechanics.transformToCoordCol(cellPosition);
 
@@ -141,7 +139,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
 
         if(clickedCell.hasMine() && !clickedCell.hasFlag())
         {
-            this.log.info("Mined cell is clicked, lose acquired");
+            this.log.info("Mined cell " + xCoord + "," + yCoord + "is clicked, lose acquired");
             this.myMediaPlayer.playExplosion(this);
             this.openField(adapterView);
             this.createMenuAfterGameOver();
