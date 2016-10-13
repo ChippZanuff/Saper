@@ -24,6 +24,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private Logger log;
     private MediaPlayer myMediaPlayer;
     private TextView flagsCounter;
+    private Preferences preferences;
     private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
     private boolean gameOver, isVictory;
     private enum minesAmount
@@ -59,6 +60,8 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         setContentView(R.layout.gamefield);
         this.myMediaPlayer = new MediaPlayer(new Logger());
         this.myMediaPlayer.playBGMusic(this);
+
+        this.preferences = new Preferences(this, new Logger());
 
         this.log = new Logger();
         this.log.setTAG(getClass().getSimpleName());
