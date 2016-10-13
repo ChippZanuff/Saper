@@ -12,6 +12,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class GameActivity extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
@@ -25,7 +26,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private MediaPlayer myMediaPlayer;
     private TextView flagsCounter;
     private Preferences preferences;
-    private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
+    private final String SETTINGS_FILE = "Settings";
     private boolean gameOver, isVictory;
     private enum minesAmount
     {;
@@ -61,12 +62,12 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.myMediaPlayer = new MediaPlayer(new Logger());
         this.myMediaPlayer.playBGMusic(this);
 
-        this.preferences = new Preferences(this, new Logger());
+        this.preferences = new Preferences(getSharedPreferences(this.SETTINGS_FILE, MODE_PRIVATE), this.getSettingsFile(), new Logger());
 
         this.log = new Logger();
         this.log.setTAG(getClass().getSimpleName());
 
-        this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT, new Logger());
+        this.adapter = new ImageAdapter(this, this.preferences.getCellsAmount(), new Logger());
         this.gameOver = false;
 
         this.gridField = (GridView) findViewById(R.id.field);
@@ -75,7 +76,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.gridField.setOnItemLongClickListener(this);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
-        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS, new Logger());
+        this.board = new Board(this.preferences.getCellsAmount(), this.preferences.getMinesAmount(), this.preferences.getCellsAmount() / this.gridField.getNumColumns(), this.gridField.getNumColumns(), new Logger());
 
         this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
         this.setFlagsAmount();
@@ -296,5 +297,10 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         LayoutInflater inflater = LayoutInflater.from(this);
         View lay = inflater.inflate(R.layout.gameoverbuttons, layout, false);
         layout.addView(lay);
+    }
+
+    private File getSettingsFile()
+    {
+        return new File(getApplicationInfo().dataDir + "/shared_prefs/" + this.SETTINGS_FILE + ".xml");
     }
 }
