@@ -62,21 +62,21 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.myMediaPlayer = new MediaPlayer(new Logger());
         this.myMediaPlayer.playBGMusic(this);
 
-        this.preferences = new Preferences(getSharedPreferences(this.SETTINGS_FILE, MODE_PRIVATE), this.getSettingsFile(), new Logger());
+        this.gridField = (GridView) findViewById(R.id.field);
+        this.preferences = new Preferences(getSharedPreferences(this.SETTINGS_FILE, MODE_PRIVATE), this.getSettingsFile(), this.gridField.getNumColumns(), new Logger());
 
         this.log = new Logger();
         this.log.setTAG(getClass().getSimpleName());
 
-        this.adapter = new ImageAdapter(this, this.preferences.getCellsAmount(), new Logger());
+        this.adapter = new ImageAdapter(this, this.preferences, new Logger());
         this.gameOver = false;
-
-        this.gridField = (GridView) findViewById(R.id.field);
+        
         this.gridField.setAdapter(this.adapter);
         this.gridField.setOnItemClickListener(this);
         this.gridField.setOnItemLongClickListener(this);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
-        this.board = new Board(this.preferences.getCellsAmount(), this.preferences.getMinesAmount(), this.preferences.getCellsAmount() / this.gridField.getNumColumns(), this.gridField.getNumColumns(), new Logger());
+        this.board = new Board(this.preferences, new Logger());
 
         this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
         this.setFlagsAmount();

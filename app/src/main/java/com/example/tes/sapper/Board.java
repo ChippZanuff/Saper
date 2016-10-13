@@ -7,15 +7,17 @@ public class Board
     private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft;
     private Logger log;
     private ArrayList<ArrayList<CellParam>> cells;
+    private Preferences preferences;
 
-    public Board(int amountOfCells, int amountOfMines, int rows, int numColumns, Logger log)
+    public Board(Preferences preferences, Logger log)
     {
+        this.preferences = preferences;
         this.log = log;
         this.log.setTAG(getClass().getSimpleName());
-        this.amountOfCells = amountOfCells;
-        this.amountOfMines = amountOfMines;
-        this.numColumns = numColumns;
-        this.rows = rows;
+        this.amountOfCells = this.preferences.getCellsAmount();
+        this.amountOfMines = this.preferences.getMinesAmount();
+        this.numColumns = this.preferences.getNumCols();
+        this.rows = this.preferences.getNumRows();
         this.cells = this.fieldCreate();
         this.setMineField();
     }

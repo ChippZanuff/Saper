@@ -12,12 +12,14 @@ public class ImageAdapter extends BaseAdapter
     Context context;
     int countOfCell;
     private Logger log;
+    private Preferences preferences;
     //int[] thumbIds;
 
-    public ImageAdapter(Context context, int numOfCells, Logger log)
+    public ImageAdapter(Context context, Preferences preferences, Logger log)
     {
         this.context = context;
-        countOfCell = numOfCells;
+        this.countOfCell = preferences.getCellsAmount();
+        this.preferences = preferences;
 
         //this.thumbIds = new int[numOfCells];
         this.log = log;
