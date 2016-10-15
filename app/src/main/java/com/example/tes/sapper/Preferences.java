@@ -9,7 +9,10 @@ public class Preferences
     private SharedPreferences preferences;
     private Logger log;
     private File settingsFile;
-    private int cellsAmount = 132, minesAmount = 6, numRows, numCols = 12;
+    private int cellsAmount = 132;
+    private int minesAmount = 6;
+    private int numCols = 12;
+    private int numRows;
 
     public Preferences(SharedPreferences preferences, File settingsFile, Logger log)
     {
@@ -21,7 +24,6 @@ public class Preferences
         this.numRows = this.cellsAmount / this.numCols;
 
         this.getPreferencesFileValues();
-
     }
 
     private void getPreferencesFileValues()
@@ -53,11 +55,31 @@ public class Preferences
         return this.numCols;
     }
 
-    public void setPreferencesValue(String key, int value)
+    private void setPreferencesValue(String key, int value)
     {
         SharedPreferences.Editor editor = this.preferences.edit();
 
         editor.putInt(key, value);
         editor.apply();
+    }
+
+    public void setPreferencesCellsAmount(int value)
+    {
+        this.setPreferencesValue("Cells Amount", value);
+    }
+
+    public void setPreferencesMinesAmount(int value)
+    {
+        this.setPreferencesValue("Mines Amount", value);
+    }
+
+    public int getMineCounter()
+    {
+        return this.cellsAmount / this.minesAmount;
+    }
+
+    public int getZeroPoint()
+    {
+        return 0;
     }
 }

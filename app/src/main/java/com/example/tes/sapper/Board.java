@@ -20,13 +20,11 @@ public class Board
 
     private void setMineField()
     {
-        int minesAmount = this.preferences.getCellsAmount() / this.preferences.getMinesAmount();
-        int availableRow = this.preferences.getCellsAmount() / this.preferences.getNumCols();
         CellParam cell;
 
         while(true)
         {
-            int mineRow = (int) (Math.random() * (availableRow));
+            int mineRow = (int) (Math.random() * (this.preferences.getNumRows()));
             int mineCol = (int) (Math.random() * (this.preferences.getNumCols()));
             cell = this.getCellById(mineRow, mineCol);
 
@@ -36,7 +34,7 @@ public class Board
                 this.flagsLeft++;
             }
 
-            if(this.flagsLeft == minesAmount)
+            if(this.flagsLeft == this.preferences.getMineCounter())
             {
                 break;
             }
@@ -46,9 +44,9 @@ public class Board
     private ArrayList<ArrayList<CellParam>> fieldCreate()
     {
         ArrayList<ArrayList<CellParam>> field = new ArrayList<>();
+        int count = 0;
 
-
-        for(int row = 0; row < this.preferences.getCellsAmount() / this.preferences.getNumCols(); row++)
+        while(count < this.preferences.getCellsAmount())
         {
             ArrayList<CellParam> columns = new ArrayList<>();
 
@@ -58,6 +56,7 @@ public class Board
             }
 
             field.add(columns);
+            count++;
         }
 
         return field;
@@ -65,11 +64,11 @@ public class Board
 
     public boolean isCellExists(int row, int column)
     {
-        if(row >= 0 && row < this.getRows() && column >= 0 && column < this.getNumColumns())
-        {
-            return this.cells.get(row).get(column) != null;
-        }
-        return false;
+        return row >= this.preferences.getZeroPoint()
+                && row < this.getRows()
+                && column >= this.preferences.getZeroPoint()
+                && column < this.getNumColumns()
+                && this.cells.get(row).get(column) != null;
     }
 
     public void raiseOrPutDownFlagById(CellParam cell)

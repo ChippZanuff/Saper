@@ -71,6 +71,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.gameOver = false;
 
         this.gridField = (GridView) findViewById(R.id.field);
+        this.gridField.setNumColumns(this.preferences.getNumCols());
         this.gridField.setAdapter(this.adapter);
         this.gridField.setOnItemClickListener(this);
         this.gridField.setOnItemLongClickListener(this);
@@ -81,7 +82,7 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
         this.setFlagsAmount();
 
-        this.mechanics = new GameMechanics(this.board, new Logger());
+        this.mechanics = new GameMechanics(this.board, new Logger(), this.preferences);
     }
 
     public void onClick(View view)
