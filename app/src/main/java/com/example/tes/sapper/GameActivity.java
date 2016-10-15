@@ -62,15 +62,15 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.myMediaPlayer = new MediaPlayer(new Logger());
         this.myMediaPlayer.playBGMusic(this);
 
-        this.gridField = (GridView) findViewById(R.id.field);
-        this.preferences = new Preferences(getSharedPreferences(this.SETTINGS_FILE, MODE_PRIVATE), this.getSettingsFile(), this.gridField.getNumColumns(), new Logger());
+        this.preferences = new Preferences(getSharedPreferences(this.SETTINGS_FILE, MODE_PRIVATE), this.getSettingsFile(), new Logger());
 
         this.log = new Logger();
         this.log.setTAG(getClass().getSimpleName());
 
         this.adapter = new ImageAdapter(this, this.preferences, new Logger());
         this.gameOver = false;
-        
+
+        this.gridField = (GridView) findViewById(R.id.field);
         this.gridField.setAdapter(this.adapter);
         this.gridField.setOnItemClickListener(this);
         this.gridField.setOnItemLongClickListener(this);

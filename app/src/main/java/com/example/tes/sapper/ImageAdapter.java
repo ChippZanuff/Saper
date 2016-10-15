@@ -10,7 +10,6 @@ import android.widget.TextView;
 public class ImageAdapter extends BaseAdapter
 {
     Context context;
-    int countOfCell;
     private Logger log;
     private Preferences preferences;
     //int[] thumbIds;
@@ -18,7 +17,6 @@ public class ImageAdapter extends BaseAdapter
     public ImageAdapter(Context context, Preferences preferences, Logger log)
     {
         this.context = context;
-        this.countOfCell = preferences.getCellsAmount();
         this.preferences = preferences;
 
         //this.thumbIds = new int[numOfCells];
@@ -29,7 +27,7 @@ public class ImageAdapter extends BaseAdapter
     @Override
     public int getCount()
     {
-        return this.countOfCell;
+        return this.preferences.getCellsAmount();
     }
 
     @Override

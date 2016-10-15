@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Board
 {
-    private int amountOfCells, numColumns, amountOfMines, rows, flagsLeft;
+    private int flagsLeft;
     private Logger log;
     private ArrayList<ArrayList<CellParam>> cells;
     private Preferences preferences;
@@ -14,24 +14,20 @@ public class Board
         this.preferences = preferences;
         this.log = log;
         this.log.setTAG(getClass().getSimpleName());
-        this.amountOfCells = this.preferences.getCellsAmount();
-        this.amountOfMines = this.preferences.getMinesAmount();
-        this.numColumns = this.preferences.getNumCols();
-        this.rows = this.preferences.getNumRows();
         this.cells = this.fieldCreate();
         this.setMineField();
     }
 
     private void setMineField()
     {
-        int minesAmount = this.amountOfCells / this.amountOfMines;
-        int availableRow = this.amountOfCells / this.numColumns;
+        int minesAmount = this.preferences.getCellsAmount() / this.preferences.getMinesAmount();
+        int availableRow = this.preferences.getCellsAmount() / this.preferences.getNumCols();
         CellParam cell;
 
         while(true)
         {
             int mineRow = (int) (Math.random() * (availableRow));
-            int mineCol = (int) (Math.random() * (this.numColumns));
+            int mineCol = (int) (Math.random() * (this.preferences.getNumCols()));
             cell = this.getCellById(mineRow, mineCol);
 
             if(cell!= null && !cell.hasMine())
@@ -52,11 +48,11 @@ public class Board
         ArrayList<ArrayList<CellParam>> field = new ArrayList<>();
 
 
-        for(int row = 0; row < this.amountOfCells / this.numColumns; row++)
+        for(int row = 0; row < this.preferences.getCellsAmount() / this.preferences.getNumCols(); row++)
         {
             ArrayList<CellParam> columns = new ArrayList<>();
 
-            for (int column = 0; column < this.numColumns; column++)
+            for (int column = 0; column < this.preferences.getNumCols(); column++)
             {
                 columns.add(new CellParam());
             }
@@ -102,17 +98,17 @@ public class Board
 
     public int getRows()
     {
-        return this.rows;
+        return this.preferences.getNumRows();
     }
 
     public int getAmountOfCells()
     {
-        return this.amountOfCells;
+        return this.preferences.getCellsAmount();
     }
 
     public int getNumColumns()
     {
-        return this.numColumns;
+        return this.preferences.getNumCols();
     }
 
     public int getFlagsLeft()

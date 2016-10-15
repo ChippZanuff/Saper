@@ -9,34 +9,28 @@ public class Preferences
     private SharedPreferences preferences;
     private Logger log;
     private File settingsFile;
-    private final String CELLS_AMOUNT = "Cells Amount", MINES_AMOUNT = "Mines Amount";
-    private int cellsAmount = 132, minesAmount = 6, numRows, numCols;
+    private int cellsAmount = 132, minesAmount = 6, numRows, numCols = 12;
 
-    public Preferences(SharedPreferences preferences, File settingsFile, int numCols, Logger log)
+    public Preferences(SharedPreferences preferences, File settingsFile, Logger log)
     {
         this.log = log;
         this.log.setTAG(getClass().getSimpleName());
 
         this.settingsFile = settingsFile;
         this.preferences = preferences;
-        this.numCols = numCols;
-        this.setRows();
+        this.numRows = this.cellsAmount / this.numCols;
 
         this.getPreferencesFileValues();
+
     }
 
     private void getPreferencesFileValues()
     {
         if(this.settingsFile.exists())
         {
-            this.cellsAmount = this.preferences.getInt(this.CELLS_AMOUNT, this.getCellsAmount());
-            this.minesAmount = this.preferences.getInt(this.MINES_AMOUNT, this.getMinesAmount());
+            this.cellsAmount = this.preferences.getInt("Cells Amount", this.getCellsAmount());
+            this.minesAmount = this.preferences.getInt("Mines Amount", this.getMinesAmount());
         }
-    }
-
-    private void setRows()
-    {
-        this.numRows = this.cellsAmount / this.numCols;
     }
 
     public int getCellsAmount()
@@ -57,5 +51,13 @@ public class Preferences
     public int getNumCols()
     {
         return this.numCols;
+    }
+
+    public void setPreferencesValue(String key, int value)
+    {
+        SharedPreferences.Editor editor = this.preferences.edit();
+
+        editor.putInt(key, value);
+        editor.apply();
     }
 }
