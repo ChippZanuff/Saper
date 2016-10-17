@@ -28,8 +28,6 @@
         android:layout_height="wrap_content"
         android:longClickable="true"
         android:id="@+id/field"
-        android:numColumns="12"
-        android:rowCount="12"
         android:minHeight="60dp"
         android:gravity="center"
         android:background="@color/openedCell">

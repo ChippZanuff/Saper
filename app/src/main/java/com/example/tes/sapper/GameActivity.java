@@ -12,6 +12,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class GameActivity extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener
@@ -24,7 +25,8 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     private Logger log;
     private MediaPlayer myMediaPlayer;
     private TextView flagsCounter;
-    private final int CELLS_AMOUNT = 132, AMOUNT_OF_MINES = 6, NUM_COLUMNS = 12, ROWS = 11;
+    private Preferences preferences;
+    private final String SETTINGS_FILE = "Settings";
     private boolean gameOver, isVictory;
     private enum minesAmount
     {;
@@ -60,24 +62,27 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         this.myMediaPlayer = new MediaPlayer(new Logger());
         this.myMediaPlayer.playBGMusic(this);
 
+        this.preferences = new Preferences(getSharedPreferences(this.SETTINGS_FILE, MODE_PRIVATE), this.getSettingsFile(), new Logger());
+
         this.log = new Logger();
         this.log.setTAG(getClass().getSimpleName());
 
-        this.adapter = new ImageAdapter(this, this.CELLS_AMOUNT, new Logger());
+        this.adapter = new ImageAdapter(this, this.preferences, new Logger());
         this.gameOver = false;
 
         this.gridField = (GridView) findViewById(R.id.field);
+        this.gridField.setNumColumns(this.preferences.getNumCols());
         this.gridField.setAdapter(this.adapter);
         this.gridField.setOnItemClickListener(this);
         this.gridField.setOnItemLongClickListener(this);
 
         this.openCell = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.opencell);
-        this.board = new Board(this.CELLS_AMOUNT, this.AMOUNT_OF_MINES, this.ROWS, this.NUM_COLUMNS, new Logger());
+        this.board = new Board(this.preferences, new Logger());
 
         this.flagsCounter = (TextView) findViewById(R.id.flagCounter);
         this.setFlagsAmount();
 
-        this.mechanics = new GameMechanics(this.board, new Logger());
+        this.mechanics = new GameMechanics(this.board, new Logger(), this.preferences);
     }
 
     public void onClick(View view)
@@ -97,22 +102,28 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         int xCoord = this.mechanics.transformToCoordRow(cellPosition);
         int yCoord = this.mechanics.transformToCoordCol(cellPosition);
-        CellParam cell = this.board.getCellById(xCoord, yCoord);
 
-        if(cell == null || cell.isOpen())
+        if(this.board.hasCell(xCoord, yCoord))
         {
-            this.log.info("Cell " + xCoord + ", " + yCoord + " is opened or equals null, end method");
+            this.log.info("Cell " + xCoord + ", " + yCoord + " not found");
+            return true;
+        }
+
+        CellParam cell = this.board.getCellById(xCoord, yCoord);
+        if(cell.isOpen())
+        {
+            this.log.info("Cell " + xCoord + ", " + yCoord + " is opened");
             return true;
         }
 
         if(!cell.hasFlag() && this.board.getFlagsLeft() > 0)
         {
-            this.log.info("On cell " + xCoord + "," + yCoord + "flag image is set");
+            this.log.info("On cell " + xCoord + "," + yCoord + " flag image is set");
             view.setBackgroundResource(R.drawable.flag);
         }
         else
         {
-            this.log.info("On cell " + xCoord + "," + yCoord + "closed cell image is set");
+            this.log.info("On cell " + xCoord + "," + yCoord + " closed cell image is set");
             view.setBackgroundResource(R.drawable.closedcell);
         }
 
@@ -293,5 +304,10 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
         LayoutInflater inflater = LayoutInflater.from(this);
         View lay = inflater.inflate(R.layout.gameoverbuttons, layout, false);
         layout.addView(lay);
+    }
+
+    private File getSettingsFile()
+    {
+        return new File(getApplicationInfo().dataDir + "/shared_prefs/" + this.SETTINGS_FILE + ".xml");
     }
 }
