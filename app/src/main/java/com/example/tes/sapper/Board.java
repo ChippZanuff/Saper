@@ -8,6 +8,7 @@ public class Board
     private Logger log;
     private ArrayList<ArrayList<CellParam>> cells;
     private Preferences preferences;
+    private final int LEFT = -1, RIGHT = 1, TOP = -1, BOTTOM = 1;
 
     public Board(Preferences preferences, Logger log)
     {
@@ -44,9 +45,8 @@ public class Board
     private ArrayList<ArrayList<CellParam>> fieldCreate()
     {
         ArrayList<ArrayList<CellParam>> field = new ArrayList<>();
-        int count = 0;
 
-        while(count < this.preferences.getCellsAmount())
+        for(int i = 0; i < this.preferences.getNumRows(); i++)
         {
             ArrayList<CellParam> columns = new ArrayList<>();
 
@@ -56,7 +56,6 @@ public class Board
             }
 
             field.add(columns);
-            count++;
         }
 
         return field;
@@ -64,10 +63,13 @@ public class Board
 
     public boolean isCellExists(int row, int column)
     {
-        return row >= this.preferences.getZeroPoint()
-                && row < this.getRows()
-                && column >= this.preferences.getZeroPoint()
-                && column < this.getNumColumns()
+        return this.isOnBoard(row, column);
+    }
+
+    public boolean hasCell(int row, int column)
+    {
+        return this.isOnBoard(row, column)
+                && this.cells.get(row) != null
                 && this.cells.get(row).get(column) != null;
     }
 
@@ -93,11 +95,6 @@ public class Board
         }
 
         return null;
-    }
-
-    public int getRows()
-    {
-        return this.preferences.getNumRows();
     }
 
     public int getAmountOfCells()
@@ -137,5 +134,45 @@ public class Board
         }
 
         return true;
+    }
+
+    public ArrayList<Point> findPointsAroundCell(int row, int col)
+    {
+        ArrayList<Point> points = new ArrayList<>();
+
+        if (this.hasCell(row, col + this.RIGHT)) {
+            points.add(new Point(row, col + this.RIGHT));
+        }
+        if (this.hasCell(row + this.BOTTOM, col)) {
+            points.add(new Point(row + this.BOTTOM, col));
+        }
+        if (this.hasCell(row + this.TOP, col)) {
+            points.add(new Point(row + this.TOP, col));
+        }
+        if (this.hasCell(row, col + this.LEFT)) {
+            points.add(new Point(row, col + this.LEFT));
+        }
+        if (this.hasCell(row + this.BOTTOM, col + this.RIGHT)) {
+            points.add(new Point(row + this.BOTTOM, col + this.RIGHT));
+        }
+        if (this.hasCell(row + this.BOTTOM, col + this.LEFT)) {
+            points.add(new Point(row + this.BOTTOM, col + this.LEFT));
+        }
+        if (this.hasCell(row + this.TOP, col + this.RIGHT)) {
+            points.add(new Point(row + this.TOP, col + this.RIGHT));
+        }
+        if (this.hasCell(row + this.TOP, col + this.LEFT)) {
+            points.add(new Point(row + this.TOP, col + this.LEFT));
+        }
+
+        return points;
+    }
+
+    public boolean isOnBoard(int row, int column)
+    {
+        return row >= this.preferences.getStartingPosition()
+                && row < this.preferences.getNumRows()
+                && column >= this.preferences.getStartingPosition()
+                && column < this.preferences.getNumCols();
     }
 }

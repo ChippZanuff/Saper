@@ -102,22 +102,28 @@ public class GameActivity extends Activity implements AdapterView.OnItemClickLis
     {
         int xCoord = this.mechanics.transformToCoordRow(cellPosition);
         int yCoord = this.mechanics.transformToCoordCol(cellPosition);
-        CellParam cell = this.board.getCellById(xCoord, yCoord);
 
-        if(cell == null || cell.isOpen())
+        if(this.board.hasCell(xCoord, yCoord))
         {
-            this.log.info("Cell " + xCoord + ", " + yCoord + " is opened or equals null, end method");
+            this.log.info("Cell " + xCoord + ", " + yCoord + " not found");
+            return true;
+        }
+
+        CellParam cell = this.board.getCellById(xCoord, yCoord);
+        if(cell.isOpen())
+        {
+            this.log.info("Cell " + xCoord + ", " + yCoord + " is opened");
             return true;
         }
 
         if(!cell.hasFlag() && this.board.getFlagsLeft() > 0)
         {
-            this.log.info("On cell " + xCoord + "," + yCoord + "flag image is set");
+            this.log.info("On cell " + xCoord + "," + yCoord + " flag image is set");
             view.setBackgroundResource(R.drawable.flag);
         }
         else
         {
-            this.log.info("On cell " + xCoord + "," + yCoord + "closed cell image is set");
+            this.log.info("On cell " + xCoord + "," + yCoord + " closed cell image is set");
             view.setBackgroundResource(R.drawable.closedcell);
         }
 

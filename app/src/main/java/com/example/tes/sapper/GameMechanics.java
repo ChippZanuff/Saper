@@ -13,7 +13,7 @@ public class GameMechanics
     private ArrayList<Integer> minesValue;
     private Logger log;
     private int adjacentMinesCounter;
-    private final int LEFT = -1, RIGHT = 1, TOP = -1, BOTTOM = 1;
+
     private Preferences preferences;
 
     public GameMechanics(Board board, Logger log, Preferences preferences)
@@ -32,13 +32,18 @@ public class GameMechanics
     {
         CellParam cell;
         ArrayList<CellParam> adjacentMinesCells = new ArrayList<>();
-        int transformedIndex = row * this.board.getNumColumns() + col;
+        int transformedIndex = row * this.preferences.getNumCols() + col;
         View iteratedView = adapterView.getChildAt(transformedIndex);
 
         cell = this.board.getCellById(row, col);
         if (!cell.isCellVisitedByIterator() && !cell.isOpen() && !cell.hasFlag() && !cell.hasMine())
         {
-            this.selectAdjacentCells(adjacentMinesCells, row, col);
+            ArrayList<Point> points = this.board.findPointsAroundCell(row, col);
+
+            for (Point point : points)
+            {
+                adjacentMinesCells.add(this.board.getCellById(point.getRow(), point.getColumn()));
+            }
 
             this.checkMines(adjacentMinesCells, row, col);
 
@@ -59,59 +64,11 @@ public class GameMechanics
                 return;
             }
 
-            if (col < this.board.getNumColumns() - this.RIGHT)
+            for (Point point : points)
             {
                 cell.makeOpen();
-                this.cellsIteration(row, col + this.RIGHT, adapterView);
+                this.cellsIteration(point.getRow(), point.getColumn(), adapterView);
             }
-
-            if (row < this.board.getRows() - this.BOTTOM)
-            {
-                cell.makeOpen();
-                this.cellsIteration(row + this.BOTTOM, col, adapterView);
-            }
-
-            if (row > this.preferences.getZeroPoint())
-            {
-                cell.makeOpen();
-                this.cellsIteration(row + this.TOP, col, adapterView);
-            }
-
-            if (col > this.preferences.getZeroPoint())
-            {
-                cell.makeOpen();
-                this.cellsIteration(row, col + this.LEFT, adapterView);
-            }
-
-
-            if (col < this.board.getNumColumns() - this.RIGHT
-                    && row < this.board.getRows() - this.BOTTOM)
-            {
-                cell.makeOpen();
-                this.cellsIteration(row + this.BOTTOM, col + this.RIGHT, adapterView);
-            }
-
-            if (col > this.preferences.getZeroPoint()
-                    && row < this.board.getRows() - this.BOTTOM)
-            {
-                cell.makeOpen();
-                this.cellsIteration(row + this.BOTTOM, col + this.LEFT, adapterView);
-            }
-
-            if (col < this.board.getNumColumns() - this.RIGHT
-                    && row > this.preferences.getZeroPoint())
-            {
-                cell.makeOpen();
-                this.cellsIteration(row + this.TOP, col + this.RIGHT, adapterView);
-            }
-
-            if (col > this.preferences.getZeroPoint()
-                    && row > this.preferences.getZeroPoint())
-            {
-                cell.makeOpen();
-                this.cellsIteration(row + this.TOP, col + this.LEFT, adapterView);
-            }
-
             cell.setCellVisitedByIterator();
         }
     }
@@ -131,28 +88,6 @@ public class GameMechanics
         return this.minesValue;
     }
 
-    private void selectAdjacentCells(ArrayList<CellParam> adjacentMinesCells, int row, int col)
-    {
-        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col));
-        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col + this.RIGHT));
-        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.TOP, col + this.LEFT));
-
-        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col + this.RIGHT));
-        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col));
-        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row + this.BOTTOM, col + this.LEFT));
-
-        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row, col + this.LEFT));
-        this.AddCellParam(adjacentMinesCells, this.board.getCellById(row, col + this.RIGHT));
-    }
-
-    private void AddCellParam(ArrayList<CellParam> adjacentMinesCells, CellParam cell)
-    {
-        if (cell != null)
-        {
-            adjacentMinesCells.add(cell);
-        }
-    }
-
     private void checkMines(ArrayList<CellParam> adjacentMinesCells, int row, int col)
     {
         for (CellParam iteratedCell : adjacentMinesCells)
@@ -163,7 +98,7 @@ public class GameMechanics
             }
         }
 
-        if (this.adjacentMinesCounter > this.preferences.getZeroPoint())
+        if (this.adjacentMinesCounter > this.preferences.getStartingPosition())
         {
             CellParam cell = this.board.getCellById(row, col);
             cell.setMinesAround();
@@ -172,11 +107,11 @@ public class GameMechanics
 
     public int transformToCoordRow(int cellPosition)
     {
-        return cellPosition / this.board.getNumColumns();
+        return cellPosition / this.preferences.getNumCols();
     }
 
     public int transformToCoordCol(int cellPosition)
     {
-        return cellPosition % this.board.getNumColumns();
+        return cellPosition % this.preferences.getNumCols();
     }
 }

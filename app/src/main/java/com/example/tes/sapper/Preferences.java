@@ -21,7 +21,7 @@ public class Preferences
 
         this.settingsFile = settingsFile;
         this.preferences = preferences;
-        this.numRows = this.cellsAmount / this.numCols;
+
 
         this.getPreferencesFileValues();
     }
@@ -47,7 +47,7 @@ public class Preferences
 
     public int getNumRows()
     {
-        return this.numRows;
+        return this.cellsAmount / this.numCols;
     }
 
     public int getNumCols()
@@ -78,7 +78,7 @@ public class Preferences
         return this.cellsAmount / this.minesAmount;
     }
 
-    public int getZeroPoint()
+    public int getStartingPosition()
     {
         return 0;
     }
